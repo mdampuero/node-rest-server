@@ -20,7 +20,7 @@ const UserSchema = Schema({
     role: {
         type: String,
         required: true,
-        enum: ['ADMIN_ROLE', 'USER_ROL']
+        enum: ['ADMIN_ROLE', 'USER_ROLE']
     },
     isDelete: {
         type: Boolean,
