@@ -2,13 +2,27 @@ const { response, request } = require("express");
 const User = require("../models/user");
 const bcryptjs = require('bcryptjs');
 
-const usersGet = (req = request, res = response) => {
+const usersGet = async (req = request, res = response) => {
     const { page = '1', offset = '0', limit = '50' } = req.query;
+    const query = { isDelete: false }
+
+    const [total, result] = await Promise.all([
+        User.countDocuments(query),
+        User.find(query)
+            .limit(Number(limit))
+            .skip(Number(offset))
+    ])
     res.json({
-        msg: 'get API',
-        page,
-        offset,
-        limit
+        total,
+        result
+    })
+}
+
+const usersGetOne = async (req, res = response) => {
+    const { id } = req.params;
+    const user = await User.findById(id);
+    res.json({
+        user
     })
 }
 
@@ -16,30 +30,34 @@ const usersPost = async (req, res = response) => {
     const { name, email, password, role } = req.body;
     const user = new User({ name, email, password, role });
 
-    //Validadar 
-    const emailExist = await User.findOne({ email });
-    if(emailExist)
-        return res.status(400).json({ error: 'El email ya existe' }); 
     const salt = bcryptjs.genSaltSync(10);
     user.password = bcryptjs.hashSync(salt);
 
     await user.save();
     res.json({
-        msg: 'post APIaaaa',
         user
     })
 }
 
-const usersPut = (req, res = response) => {
-    const id = req.params.id;
+const usersPut = async (req, res = response) => {
+    const { id } = req.params;
+    const { _id, googleLogin, password, email, ...resto } = req.body;
+
+    if (password) {
+
+    }
+
+    const user = await User.findByIdAndUpdate(id, resto, { new: true });
     res.json({
-        msg: 'put API' + id
+        user
     })
 }
 
-const usersDelete = (req, res = response) => {
+const usersDelete = async (req, res = response) => {
+    const { id } = req.params;
+    const user = await User.findByIdAndUpdate(id, { isDelete: true }, { new: true });
     res.json({
-        msg: 'delete API'
+        user
     })
 }
 
@@ -47,5 +65,6 @@ module.exports = {
     usersGet,
     usersPost,
     usersPut,
-    usersDelete
+    usersDelete,
+    usersGetOne
 }
