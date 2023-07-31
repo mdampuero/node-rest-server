@@ -30,7 +30,8 @@ class Server {
 
     routes() {
         this.app.use('/api/users',require('../routes/user.routes'));
-
+        this.app.use('/api/readings',require('../routes/readings.routes'));
+        this.app.use('/api/auth',require('../routes/auth.routes'));
     }
 
     listen() {

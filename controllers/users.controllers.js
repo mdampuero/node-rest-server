@@ -31,7 +31,7 @@ const usersPost = async (req, res = response) => {
     const user = new User({ name, email, password, role });
 
     const salt = bcryptjs.genSaltSync(10);
-    user.password = bcryptjs.hashSync(salt);
+    user.password = bcryptjs.hashSync(password,salt);
 
     await user.save();
     res.json({
