@@ -23,13 +23,14 @@ const readingsPost = async (req, res = response) => {
         reading.count++;
     else
         reading = new Reading({ string });
-        
+
     if (checkPass(reading.count)) {
-        res.status(403).json({ message : "Error"});
+        res.status(403).json({ message: "Error", max: process.env.MAX_READING });
     } else {
         await reading.save();
         res.json({
-            reading
+            reading,
+            max: process.env.MAX_READING
         })
     }
 }
