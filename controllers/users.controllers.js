@@ -32,10 +32,11 @@ const usersPost = async (req, res = response) => {
 
     const salt = bcryptjs.genSaltSync(10);
     user.password = bcryptjs.hashSync(password,salt);
-
+    const userLogin = req.user;
     await user.save();
     res.json({
-        user
+        user,
+        userLogin
     })
 }
 
